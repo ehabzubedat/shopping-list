@@ -1,0 +1,10 @@
+.App {
+  max-width: 500px;
+  margin: auto;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
