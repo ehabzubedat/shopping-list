@@ -64,7 +64,9 @@ app.delete('/list/delete/:id', (req, res) => {
 app.put('/list/update/:id', (req, res) => {
     Product.findOneAndUpdate(
         { _id: req.params.id },
-        { $set: { isPicked: true } }
+        [
+            { $set: { isPicked: { $not: "$isPicked" } } }
+        ]
     ).then((data) => {
         res.send(data);
     }).catch((err) => {

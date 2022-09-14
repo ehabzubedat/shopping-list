@@ -29,6 +29,9 @@ const validationSchema = yup.object({
 
 function App() {
     const [list, setList] = useState([]);
+    const [checked, setChecked] = useState(
+        new Array(list.length).fill(false)
+    );
 
     // Functions that get shopping list products from database 
     const getData = async () => {
@@ -48,7 +51,7 @@ function App() {
             showCancelButton: true,
             confirmButtonText: 'Delete',
             confirmButtonColor: '#d9534f'
-          }).then((result) => {
+        }).then((result) => {
             if (result.isConfirmed) {
                 const newList = [...list];
                 newList.splice(index, 1);
@@ -56,8 +59,32 @@ function App() {
                 axios.delete(`http://localhost:3030/list/delete/${id}`);
                 Swal.fire('Successfully Deleted!', '', 'success');
             }
-          });
+        });
     }
+
+    const checkItem = (index, id) => {
+        const newList = [...list];
+        Swal.fire({
+            icon: 'question',
+            title: `Did you pick up ${newList[index].quantity} of this product: ${newList[index].product}`,
+            showCancelButton: true,
+            cancelButtonColor: '#d9534f',
+            cancelButtonText: 'No',
+            confirmButtonColor: '#28a745',
+            confirmButtonText: 'Yes'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.put(`http://localhost:3030/list/update/${id}`)
+                .then(() => {
+                    newList[index].isPicked = !newList[index].isPicked;
+                    setList(newList);
+                }).catch((err) => {
+                    console.log(err);
+                });
+            }
+        });
+    }
+    
 
     const formik = useFormik({
         initialValues: {
@@ -91,6 +118,8 @@ function App() {
         },
         validationSchema: validationSchema
     });
+
+    
   return (
     <div className="App">
         <form onSubmit={formik.handleSubmit}>
@@ -143,6 +172,8 @@ function App() {
                         <ListItemIcon>
                             <Checkbox
                                 edge="start"
+                                checked={product.isPicked}
+                                onChange={() => checkItem(index, product._id)}
                                 disableRipple
                             />
                         </ListItemIcon>
