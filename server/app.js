@@ -7,7 +7,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // mongodb connection
-const url = 'mongodb+srv://ehabzubedat:qwerty123@cluster1.6uqkjen.mongodb.net/shopping_list?retryWrites=true&w=majority';
+const url = 'cluster url';
 
 mongoose.connect(url).then(() => {
     console.log('Connected to database..')
